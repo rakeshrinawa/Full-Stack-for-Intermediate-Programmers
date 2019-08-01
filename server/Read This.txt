@@ -1,0 +1,8 @@
+// npm init -y
+// npm i --save express cors dotenv mongoose
+// npm i --save-dev nodemon morgan
+
+
+
+// service mongod start && npm rundev
+// service mongod start && npm start

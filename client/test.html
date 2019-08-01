@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Full Stack for Intermediates</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
+        integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+</head>
+
+<body>
+    <!-- THE HEADER -->
+    <div class="display-4 mb-4 container-fluid" style="background: aqua; padding-top: 1px;">
+        <div class="row" style="padding: 10px;">
+            <h3 style="margin-right: 150px; margin-left: 50px;">Full Stack for Intermediates Tutorial</h3>
+            <button
+                style="background-color: blue; width: 200px; height: 40px; font-size: 20px; margin-right: 20px;">About
+                Project</button><span></span>
+            <button style="background-color: blue; width: 120px; height: 40px; font-size: 20px;">My Profile</button>
+        </div>
+    </div>
+    <hr>
+
+
+    <hr>
+    <!-- CRUD BUTTONS -->
+    <div>
+        <div class="d-flex" style="padding: 10px 5px 10px 5px;">
+            <button class="btn btn-primary mr-4" id="getUsers" style=" margin-left: 400px; ">Show Users</button>
+            <button class="btn btn-primary mr-4" id="getUser">Show User</button>
+            <input type="button" class="btn btn-success mr-4" id="createUser" value="Create the User"
+                onclick="createUser">
+            <button class="btn btn-warning mr-4" id="editUser">Edit User Details </button>
+            <button class="btn btn-danger mr-4" id="deleteUser">Delete User</button>
+        </div>
+    </div>
+    <!-- SUBMIT/ EDIT ELEMENT -->
+    <div class="container-fluid">
+        <div style="padding: 1px; height: 300px ; overflow:auto;">
+            <form action="" id="submitForm">
+                Enter ID of the user:
+                <input type="text" id="userId" class="form-control" placeholder="Enter User ID" style="margin: 5px;" />
+                Enter Name of the user:
+                <input type="text" id="name" name="name" class="form-control" placeholder="Enter Name of User"
+                    style="margin: 5px;" />
+                Enter name of Channel subscribed:
+                <input type="text" id="subscribedToChannel" name="subscribedToChannel" class="form-control"
+                    placeholder="Name of Channel subscribed" style="margin: 5px;" />
+                <input type="text" id="subscribeDate" class="form-control" placeholder="Date of subscription"
+                    style="margin: 5px;" />
+            </form>
+        </div>
+    </div>
+    <!-- OUTPUT ELEMENT -->
+    <div id="output" class="display-8 mb-4" style="height: 800px; margin: 60px; padding: 10px; overflow: auto;"></div>
+    <hr>
+    <hr>
+
+    <script>
+        const API_URL = 'http://localhost:5000/subscribers/';
+        // Handle getUsers
+        document.getElementById('getUsers').addEventListener('click', getUsers);
+
+        function getUsers() {
+            console.log('Show Users Button Pressed');
+            fetch(API_URL)
+                .then((res) => res.json())
+                .then((data) => {
+                    console.log(data);
+                    let output = '';
+                    output = '<h5 class="mb-4">The Details of the users are as follows:</h5><hr>';
+                    data.forEach(function (user) {
+                        output += `
+                    <ul class="list-group mb-3">
+                     <li class="list-group-item"><a style="color: blue;">ID of the User</a>: ${user._id}</li>
+                     <li class="list-group-item"><a style="color: blue;">Name</a>: ${user.name}</li>
+                     <li class="list-group-item"><a style="color: blue;">Channel Subscribed</a>: ${user.subscribedToChannel}</li>
+                     <li class="list-group-item"><a style="color: blue;">Date of Subscription</a>: ${user.subscribeDate}</li> 
+                     </ul><hr>
+                     `;
+                    });
+                    document.getElementById('output').innerHTML = output;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // // Handle getUser
+        var userId = document.getElementById('userId').value;
+        document.getElementById('getUser').addEventListener('click', getUser);
+
+        function getUser() {
+            console.log('Show User Button Pressed');
+            var userId = document.getElementById('userId').value;
+
+            var url = `${API_URL}${userId}`;
+            fetch(url)
+                .then((res) => res.json())
+                .then((data) => {
+                    console.log(data);
+                    let output = '';
+                    output = '<h5 class="mb-4">The Details of the user is as follows:</h5><hr>';
+
+                    output += `
+                    <ul class="list-group mb-3">
+                     <li class="list-group-item"><a style="color: blue;">ID of the User</a>: ${data._id}</li>
+                     <li class="list-group-item"><a style="color: blue;">Name</a>: ${data.name}</li>
+                     <li class="list-group-item"><a style="color: blue;">Channel Subscribed</a>: ${data.subscribedToChannel}</li>
+                     <li class="list-group-item"><a style="color: blue;">Date of Subscription</a>: ${data.subscribeDate}</li> 
+                     </ul><hr>
+                     `;
+
+                    document.getElementById('output').innerHTML = output;
+                })
+                .catch(error => console.error('Error:', error));
+
+        }
+        // Handle createUser
+        document.getElementById('createUser').addEventListener('click', createUser);
+
+        function createUser(e) {
+            e.preventDefault();
+            var name = document.getElementById('name').value;
+            var subscribedToChannel = document.getElementById('subscribedToChannel').value;
+            // var name = 'mamma'
+            // var subscribedToChannel = 'mamma channel'
+            // var createUserBody = '{ name:"' + `${name}` + '", subscribedToChannel: "' +
+            //     `${subscribedToChannel}` +
+            //     '"}';
+            console.log('Create User Button pressed');
+            // console.log(createUserBody);
+            fetch('http://localhost:5000/subscribers', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json, text/plain, */*',
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        subscribedToChannel: subscribedToChannel
+                    })
+                })
+                // .then(res => res.text()) // convert to plain text
+                // .then(text => console.log(text)) // then log it out
+                .then((res) => res.json())
+                .then((data) => {
+                    console.log(data)
+                    alert('User has been createed')
+                })
+        }
+
+        // Handle editUser
+        document.getElementById('editUser').addEventListener('click', editUser)
+
+        function editUser(e) {
+            e.preventDefault()
+            console.log('Edit User Button Pressed')
+            var userId = document.getElementById('userId').value;
+            var name = document.getElementById('name').value
+            var subscribedToChannel = document.getElementById('subscribedToChannel').value
+            url = `${API_URL}${userId}`
+            console.log(url)
+            fetch(url, {
+                    method: 'PATCH',
+                    headers: {
+                        'Accept': 'application/json, text/plain, */**',
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+
+                        name: name,
+                        subscribedToChannel: subscribedToChannel
+                    })
+                })
+                .then(res => res.json)
+                .then(data => {
+                    console.log(data)
+                    alert('User has been edited')
+                })
+                .catch(error => console.log(error))
+
+        }
+
+        // Handle deleteUser
+        document.getElementById('deleteUser').addEventListener('click', deleteUser)
+
+        function deleteUser() {
+            console.log('Delete User Button Pressed')
+            var userId = document.getElementById('userId').value
+            url = `${API_URL}${userId}`;
+            fetch(url, {
+                    method: 'DELETE',
+                    headers: {
+                        'content-type': 'application/json'
+                    }
+                })
+                .then((res) => res.json())
+                .then((data) => {
+                    console.log(data)
+                    alert('User has been Deleted')
+                })
+        }
+    </script>
+    <hr>
+</body>
+
+</html>
